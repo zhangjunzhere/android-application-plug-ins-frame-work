@@ -3,9 +3,9 @@ package org.igeek.android.demo;
 
 import org.igeek.android.pluginframework.R;
 import org.igeek.android.pluginframework.beans.PluginFeatureMethod;
+import org.igeek.android.pluginframework.beans.PluginIntent;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,4 +60,10 @@ public class PluginItem extends LinearLayout {
 		llFeatures.addView(btn);
 	}
 
+	public void addPluginMethod(PluginIntent intent,OnClickListener ocl){
+		Button btn=new Button(context);
+		btn.setText(intent.getDescription());
+		btn.setOnClickListener(ocl);
+		llFeatures.addView(btn);
+	}
 }

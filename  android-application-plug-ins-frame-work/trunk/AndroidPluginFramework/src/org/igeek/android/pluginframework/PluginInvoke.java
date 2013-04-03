@@ -23,9 +23,12 @@ import java.lang.reflect.Method;
 import org.igeek.android.pluginframework.beans.Plugin;
 import org.igeek.android.pluginframework.beans.PluginFeature;
 import org.igeek.android.pluginframework.beans.PluginFeatureMethod;
+import org.igeek.android.pluginframework.beans.PluginIntent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
 
 /**
  * @author 作者 E-mail:hangxin1940@gmail.com
@@ -77,5 +80,17 @@ public class PluginInvoke {
 		}
 			
 		
+	}
+	
+	public void invoke(PluginIntent intent) {
+		invoke(intent, null);
+	}
+
+	public void invoke(PluginIntent intent, Bundle extras) {
+		Intent i = intent.getIntent();
+		if (extras != null) {
+			i.putExtras(extras);
+		}
+		context.startActivity(intent.getIntent());
 	}
 }
