@@ -19,11 +19,14 @@ package org.igeek.android.pluginframework.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.igeek.android.pluginframework.beans.Plugin;
 import org.igeek.android.pluginframework.beans.PluginFeature;
 import org.igeek.android.pluginframework.beans.PluginFeatureMethod;
+import org.igeek.android.pluginframework.beans.PluginIntent;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -35,15 +38,19 @@ import android.util.Xml;
  * @version 创建时间：2011-12-15 上午11:58:36 解析xml
  */
 public class XMLParse {
-	private static final String _PLUGIN = "plugin-features";
-	private static final String _FEATURE = "feature";
-	private static final String _METHOD = "method";
-	private static final String _DESCRIPTION = "description";
-	private static final String _NEEDCTX = "need-context";
 
-	private static final String _NAME = "name";
-
-	private static final String _NAME_SPACE = "";
+	public static interface XmlElement {
+		public static final String _PLUGIN = "plugin-features";
+		public static final String _FEATURE = "feature";
+		public static final String _METHOD = "method";
+		public static final String _DESCRIPTION = "description";
+		public static final String _NEEDCTX = "need-context";
+		public static final String _NAME = "name";
+		public static final String _NAME_SPACE = "";
+		public static final String _INTENT = "intent";
+		public static final String _ACTION = "action";
+		public static final String _KEY = "key";
+	}
 
 	public XMLParse() {
 	}
@@ -65,11 +72,16 @@ public class XMLParse {
 
 		List<PluginFeature> features = new ArrayList<PluginFeature>();
 
+		Map<String, PluginIntent> intents = new HashMap<String, PluginIntent>();
+		plugin.setIntents(intents);
+
 		int event = parser.getEventType();
 
 		PluginFeature feature = new PluginFeature();
 
 		PluginFeatureMethod featureMethod = new PluginFeatureMethod();
+
+		PluginIntent intent = new PluginIntent();
 
 		// 一直走到文档结束
 		while (event != XmlPullParser.END_DOCUMENT) {
@@ -79,35 +91,46 @@ public class XMLParse {
 			case XmlPullParser.START_TAG:
 
 				// 主节点
-				if (_PLUGIN.equals(parser.getName())) {
+				if (XmlElement._PLUGIN.equalsIgnoreCase(parser.getName())) {
 					Log.i("org.igeek.android-plugin",
 							"plugin.xml document start parse");
 				}
 
 				// 功能描述结点
-				else if (_DESCRIPTION.equals(parser.getName())) {
-					plugin.setDescription(parser.getAttributeValue(_NAME_SPACE,
-							_NAME));
+				else if (XmlElement._DESCRIPTION.equalsIgnoreCase(parser
+						.getName())) {
+					plugin.setDescription(parser.getAttributeValue(
+							XmlElement._NAME_SPACE, XmlElement._NAME));
 				}
 
 				// 功能描述结点
-				else if (_FEATURE.equals(parser.getName())) {
+				else if (XmlElement._FEATURE.equalsIgnoreCase(parser.getName())) {
 					feature.setFeatureName(parser.getAttributeValue(
-							_NAME_SPACE, _NAME));
+							XmlElement._NAME_SPACE, XmlElement._NAME));
 				}
 
 				// 方法描述结点
-				else if (_METHOD.equals(parser.getName())) {
-
+				else if (XmlElement._METHOD.equalsIgnoreCase(parser.getName())) {
 					featureMethod.setMethodName(parser.getAttributeValue(
-							_NAME_SPACE, _NAME));
-					if ("true".endsWith(parser.getAttributeValue(_NAME_SPACE,
-							_NEEDCTX)))
+							XmlElement._NAME_SPACE, XmlElement._NAME));
+					if ("true".endsWith(parser.getAttributeValue(
+							XmlElement._NAME_SPACE, XmlElement._NEEDCTX))) {
 						featureMethod.setNeedContext(true);
-					else
+					} else {
 						featureMethod.setNeedContext(false);
-
+					}
 					featureMethod.setDescription(parser.nextText());
+					event = parser.getEventType();
+					if (event == XmlPullParser.END_TAG) {
+						continue;
+					}
+				} else if (XmlElement._INTENT
+						.equalsIgnoreCase(parser.getName())) {
+					intent.setAction(parser.getAttributeValue(
+							XmlElement._NAME_SPACE, XmlElement._ACTION));
+					intent.setKey(parser.getAttributeValue(
+							XmlElement._NAME_SPACE, XmlElement._KEY));
+					intent.setDescription(parser.nextText());
 					event = parser.getEventType();
 					if (event == XmlPullParser.END_TAG) {
 						continue;
@@ -117,25 +140,26 @@ public class XMLParse {
 
 			// 节点表前结束
 			case XmlPullParser.END_TAG:
-
 				// 方法描述结点
-				if (_METHOD.equals(parser.getName())) {
+				if (XmlElement._METHOD.equalsIgnoreCase(parser.getName())) {
 					feature.addMethod(featureMethod);
 					featureMethod = new PluginFeatureMethod();
 				}
-
 				// 功能描述结点
-				else if (_FEATURE.equals(parser.getName())) {
+				else if (XmlElement._FEATURE.equalsIgnoreCase(parser.getName())) {
 					features.add(feature);
 					feature = new PluginFeature();
 				}
-
+				// intent
+				else if (XmlElement._INTENT.equalsIgnoreCase(parser.getName())) {
+					plugin.putIntent(intent.getKey(), intent);
+					intent = new PluginIntent();
+				}
 				// 主节点
-				else if (_PLUGIN.equals(parser.getName())) {
+				else if (XmlElement._PLUGIN.equalsIgnoreCase(parser.getName())) {
 					Log.i("org.igeek.android-plugin",
 							"plugin.xml document parsed ok");
 				}
-
 				break;
 			}
 

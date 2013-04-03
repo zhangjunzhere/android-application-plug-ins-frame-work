@@ -2,7 +2,9 @@ package org.igeek.android.demo;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.igeek.android.pluginframework.PluginBuilder;
 import org.igeek.android.pluginframework.PluginDescription;
@@ -12,6 +14,7 @@ import org.igeek.android.pluginframework.R;
 import org.igeek.android.pluginframework.beans.Plugin;
 import org.igeek.android.pluginframework.beans.PluginFeature;
 import org.igeek.android.pluginframework.beans.PluginFeatureMethod;
+import org.igeek.android.pluginframework.beans.PluginIntent;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
@@ -186,6 +189,24 @@ public class AndroidPluginFrameworkActivity extends Activity {
 					});
     			}
     		}
+    		
+    		Map<String, PluginIntent> intents = plug.getIntents();
+
+			Iterator<Map.Entry<String, PluginIntent>> iterator = intents
+					.entrySet().iterator();
+
+			while (iterator.hasNext()) {
+				final Map.Entry<String, PluginIntent> entry = iterator.next();
+				item.addPluginMethod(entry.getValue(), new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						PluginInvoke pi = new PluginInvoke(
+								AndroidPluginFrameworkActivity.this);
+						pi.invoke(entry.getValue());
+					}
+				});
+
+			}
     		
     		//将插件加入到ui
     		llPluginList.addView(item);

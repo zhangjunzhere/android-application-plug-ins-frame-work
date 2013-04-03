@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-
 package org.igeek.android.pluginframework.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
 /**
- * @author  E-mail:hangxin1940@gmail.com
- * @version 创建时间：2011-12-15 上午10:52:51
- * 一个插件对象
+ * @author E-mail:hangxin1940@gmail.com
+ * @version 创建时间：2011-12-15 上午10:52:51 一个插件对象
  */
 public class Plugin {
-	
-	private String pluginLable; //插件名称
-	
-	private PackageInfo pkgInfo; //插件包信息
-	
-	private String description; //描述信息，也就是类名
-	
-	private List<PluginFeature> features;
-	
-	private Context context; //插件的句柄
-	
 
-	
+	private String pluginLable; // 插件名称
+
+	private PackageInfo pkgInfo; // 插件包信息
+
+	private String description; // 描述信息，也就是类名
+
+	private List<PluginFeature> features;
+
+	private Context context; // 插件的句柄
+
+	private Map<String, PluginIntent> intents;
+
 	public Plugin() {
-		features=new ArrayList<PluginFeature>();
+		features = new ArrayList<PluginFeature>();
 	}
-	
-	
 
 	/**
 	 * 获取插件名称
+	 * 
 	 * @return
 	 */
 	public String getPluginLable() {
@@ -58,6 +56,7 @@ public class Plugin {
 
 	/**
 	 * 设置插件名称
+	 * 
 	 * @param strPluginLable
 	 */
 	public void setPluginLable(String pluginLable) {
@@ -66,6 +65,7 @@ public class Plugin {
 
 	/**
 	 * 获取插件包信息
+	 * 
 	 * @return
 	 */
 	public PackageInfo getPkgInfo() {
@@ -74,73 +74,84 @@ public class Plugin {
 
 	/**
 	 * 设置插件包信息
+	 * 
 	 * @param pkgInfo
 	 */
 	public void setPkgInfo(PackageInfo pkgInfo) {
 		this.pkgInfo = pkgInfo;
 	}
 
-
-
 	/**
 	 * 获得功能列表
+	 * 
 	 * @return
 	 */
 	public List<PluginFeature> getFeatures() {
 		return features;
 	}
-	
+
 	/**
 	 * 添加一个功能描述
 	 */
-	public void addFeature(PluginFeature feature){
+	public void addFeature(PluginFeature feature) {
 		features.add(feature);
 	}
-	
+
 	/**
 	 * 添加所有功能描述
+	 * 
 	 * @param features
 	 */
-	public void setFeatures(List<PluginFeature> features){
-		this.features=features;
+	public void setFeatures(List<PluginFeature> features) {
+		this.features = features;
 	}
-
 
 	/**
 	 * 设置插件描述，也就是插件的包名
+	 * 
 	 * @param description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * 获取插件描述
+	 * 
 	 * @return
 	 */
-	public String getDescription(){
+	public String getDescription() {
 		return description;
 	}
 
-
 	/**
 	 * 获取插件的句柄
+	 * 
 	 * @return
 	 */
 	public Context getContext() {
 		return context;
 	}
 
-
 	/**
 	 * 设置插件的句柄
+	 * 
 	 * @param context
 	 */
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
-	
-	
+
+	public Map<String, PluginIntent> getIntents() {
+		return intents;
+	}
+
+	public void setIntents(Map<String, PluginIntent> intents) {
+		this.intents = intents;
+	}
+
+	public void putIntent(String category, PluginIntent intent) {
+		this.intents.put(category, intent);
+	}
 
 }
